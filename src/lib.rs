@@ -33,15 +33,15 @@ pub fn run(config: &Config) -> RtcResult<RunReturn> {
     let mut crud_handler = CrudHandler::<PickleDb>::new(db_wrapper);
 
     match config.operation() {
-        Operation::Add => run_add_test::<PickleDb>(&mut crud_handler, config.args()),
-        Operation::Delete => run_delete_test::<PickleDb>(&mut crud_handler, config.args()),
-        Operation::Update => run_update_test::<PickleDb>(&mut crud_handler, config.args()),
-        Operation::Filter => run_filter_test::<PickleDb>(&crud_handler, config.args()),
-        Operation::GetAll => run_getall_test::<PickleDb>(&crud_handler),
+        Operation::Add => run_add::<PickleDb>(&mut crud_handler, config.args()),
+        Operation::Delete => run_delete::<PickleDb>(&mut crud_handler, config.args()),
+        Operation::Update => run_update::<PickleDb>(&mut crud_handler, config.args()),
+        Operation::Filter => run_filter::<PickleDb>(&crud_handler, config.args()),
+        Operation::GetAll => run_getall::<PickleDb>(&crud_handler),
     }
 }
 
-fn run_add_test<T: DbDriver>(
+fn run_add<T: DbDriver>(
     crud_handler: &mut CrudHandler<T>,
     args: &[String],
 ) -> RtcResult<RunReturn> {
@@ -49,7 +49,7 @@ fn run_add_test<T: DbDriver>(
     crud_handler.add(&name.trim())
 }
 
-fn run_delete_test<T: DbDriver>(
+fn run_delete<T: DbDriver>(
     crud_handler: &mut CrudHandler<T>,
     args: &[String],
 ) -> RtcResult<RunReturn> {
@@ -57,7 +57,7 @@ fn run_delete_test<T: DbDriver>(
     crud_handler.delete(id)
 }
 
-fn run_update_test<T: DbDriver>(
+fn run_update<T: DbDriver>(
     crud_handler: &mut CrudHandler<T>,
     args: &[String],
 ) -> RtcResult<RunReturn> {
@@ -66,10 +66,7 @@ fn run_update_test<T: DbDriver>(
     crud_handler.update(id, Status::from_str(status)?)
 }
 
-fn run_filter_test<T: DbDriver>(
-    crud_handler: &CrudHandler<T>,
-    args: &[String],
-) -> RtcResult<RunReturn> {
+fn run_filter<T: DbDriver>(crud_handler: &CrudHandler<T>, args: &[String]) -> RtcResult<RunReturn> {
     let usage = format!(
         "{}\n\t{}\n\t{}\n",
         "USAGE for filter:".bold().yellow(),
@@ -103,6 +100,6 @@ fn run_filter_test<T: DbDriver>(
     )
 }
 
-fn run_getall_test<T: DbDriver>(crud_handler: &CrudHandler<T>) -> RtcResult<RunReturn> {
+fn run_getall<T: DbDriver>(crud_handler: &CrudHandler<T>) -> RtcResult<RunReturn> {
     crud_handler.filter(None, None, None, None)
 }
